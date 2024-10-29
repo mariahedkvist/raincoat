@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raincoat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f0f8ff;
+            color: #333;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 2em;
+            color: #007acc;
+            margin-bottom: 20px;
+        }
+
+        .data-container {
+            font-size: 1.2em;
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #e6f2ff;
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+        }
+
+    </style>
+    
+    <script>
+        async function fetchData() {
+            const response = await fetch('http://172.20.10.3:5000/api/weather/current');
+            const data = await response.json();
+            document.getElementById('data-temp').textContent = `Temperature: ${data.temp} °C`;
+            document.getElementById('data-feelslike').textContent = `Feels like: ${data.feels_like} °C`;
+            document.getElementById('data-windspeed').textContent = `Wind: ${data.wind_speed} m/s`;
+            document.getElementById('data-description').textContent = (data.description).charAt(0).toUpperCase() + (data.description).slice(1);
+        }
+
+        setInterval(fetchData, 30000);
+        window.onload = fetchData();
+    </script>
+</head>
+<body>
+    <h1>Current Weather</h1>
+    <div id="data-temp"></div>
+    <div id="data-feelslike"></div>
+    <div id="data-windspeed"></div>
+    <div id="data-description"></div>
+</body>
+</html>
