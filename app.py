@@ -13,6 +13,23 @@ API_KEY = os.getenv('API_KEY')
 CITY = os.getenv('CITY')
 COUNTRY = os.getenv('COUNTRY')
 
+def get_coordinates_for_city():
+    res = requests.get(GEO_API_URL, params={
+        "q": f"{CITY},{COUNTRY}",
+        "appid": API_KEY
+    }).json()
+
+    print(res)
+
+    if res and isinstance(res, list) and len(res) > 0:
+        lat = res[0]["lat"]
+        lon = res[0]["lon"]
+
+        return lat, lon
+    else:
+        raise ValueError("No coordinates found.")
+
+coordinates = get_coordinates_for_city()
 
 @app.route('/')
 def index():
@@ -20,7 +37,7 @@ def index():
 
 @app.route('/api/weather/current')
 def get_weather():
-    lat, lon = get_coordinates_for_city(CITY)
+    lat, lon = coordinates
 
     res = requests.get(API_URL, params={
         "lat": lat,
@@ -38,22 +55,6 @@ def get_weather():
     print(weather_data)
 
     return jsonify(weather_data)
-
-def get_coordinates_for_city(city):
-    res = requests.get(GEO_API_URL, params={
-        "q": f"{CITY},{COUNTRY}",
-        "appid": API_KEY
-    }).json()
-
-    print(res)
-
-    if res and isinstance(res, list) and len(res) > 0:
-        lat = res[0]["lat"]
-        lon = res[0]["lon"]
-
-        return lat, lon
-    else:
-        raise ValueError("No coordinates found.")
     
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
